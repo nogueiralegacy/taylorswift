@@ -1,4 +1,4 @@
-package com.github.nogueiralegacy.taylorswift.service;
+package com.github.nogueiralegacy.taylorswift.utils;
 
 import java.net.URI;
 import java.net.URL;

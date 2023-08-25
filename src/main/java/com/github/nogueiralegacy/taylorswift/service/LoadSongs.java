@@ -1,12 +1,17 @@
 package com.github.nogueiralegacy.taylorswift.service;
 
 import com.github.nogueiralegacy.taylorswift.domain.Song;
+import com.github.nogueiralegacy.taylorswift.utils.Utils;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
-import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoadSongs {
     private static Path songsPath;
@@ -16,17 +21,18 @@ public class LoadSongs {
 
     }
 
-    public Set<Song> loadSongs() {
-        Set<Song> songs = new HashSet<>();
+    public Map<String, Song> loadSongs() {
+        Map<String, Song> songs = new HashMap<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(songsPath.toFile()))) {
-            String line;
-            br.readLine(); // Skip header
-            while ((line = br.readLine()) != null) {
-                String[] songData = line.split(";");
-                songs.add(new Song(songData[0], songData[1], songData[2]));
+        try (Reader reader = new FileReader(songsPath.toFile())) {
+            CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
+
+            for (CSVRecord csvRecord : csvParser) {
+                String songName = csvRecord.get(0).toLowerCase();
+
+                songs.put(songName, new Song(songName, null, null));
             }
-        } catch (Exception exp) {
+        } catch (IOException exp) {
             exp.printStackTrace();
         }
 
